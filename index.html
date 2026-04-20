@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabka Seva | Blood Donation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --brand-red: #e63946;
+            --brand-dark: #1d3557;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding-top: 76px; 
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar { background-color: white !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 15px 0; }
+        .navbar-brand { font-weight: 800; font-size: 1.8rem; color: var(--brand-dark) !important; cursor: pointer; }
+        .navbar-brand span { color: var(--brand-red); }
+        .sub-heading { font-size: 0.9rem; color: #6c757d; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; display: block; margin-top: -5px; }
+        .nav-link { font-weight: 600; color: var(--brand-dark) !important; cursor: pointer; transition: 0.3s;}
+        .nav-link:hover, .nav-link.active { color: var(--brand-red) !important; }
+
+        .hero-banner { height: 60vh; display: flex; align-items: center; text-align: center; color: white; position: relative; background-size: cover; background-position: center; animation: bgSlideShow 15s infinite; }
+        .hero-banner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(rgba(29, 53, 87, 0.7), rgba(29, 53, 87, 0.8)); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; }
+
+        @keyframes bgSlideShow {
+            0%, 100% { background-image: url('https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=1920'); }
+            33% { background-image: url('https://images.unsplash.com/photo-1536856136534-bb679c52a9aa?q=80&w=1920'); }
+            66% { background-image: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1920'); }
+        }
+
+        .gallery-img { width: 100%; height: 250px; object-fit: cover; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: transform 0.3s ease; }
+        .gallery-img:hover { transform: scale(1.03); }
+
+        .form-container { background-color: white; border-radius: 16px; padding: 3rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 6px solid var(--brand-red); }
+        .form-label { font-weight: 600; color: var(--brand-dark); margin-top: 10px; }
+        .form-control, .form-select { padding: 12px; border: 1px solid #ced4da; background-color: #f8f9fa; }
+        .form-control:focus, .form-select:focus { border-color: var(--brand-red); box-shadow: 0 0 0 0.25rem rgba(230, 57, 70, 0.25); background-color: white; }
+
+        .btn-brand { background-color: var(--brand-red); color: white; font-weight: 700; padding: 12px 30px; border: none; border-radius: 8px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-brand:hover { background-color: #c1121f; color: white;}
+
+        .main-content { flex: 1; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .success-icon { font-size: 4rem; color: var(--brand-red); margin-bottom: 15px; }
+
+        .footer-watermark { background-color: var(--brand-dark); color: rgba(255, 255, 255, 0.7); padding: 20px 0; margin-top: auto; font-size: 0.95rem; border-top: 4px solid var(--brand-red); }
+        .footer-watermark strong { color: white; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" onclick="switchView('home')">
+                Sabka<span>Seva</span>
+                <span class="sub-heading">Blood Donation Initiative</span>
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+
+    <li class="nav-item">
+        <a class="nav-link active" id="nav-home" onclick="switchView('home')">Home</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" id="nav-register" onclick="switchView('register')">Register to Donate</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" id="nav-status" onclick="switchView('status')">Check Status</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" id="nav-admin" onclick="switchView('admin')">Admin</a>
+    </li>
+
+</ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div id="home" class="view-section active">
+            <div class="hero-banner">
+                <div class="container hero-content">
+                    <h1 class="display-3 fw-bold mb-3">Be a Hero. Save Lives.</h1>
+                    <p class="lead mb-4">A single drop of your blood can be a drop of life for someone else. Join the Sabka Seva mission today.</p>
+                    <button class="btn-brand btn-lg shadow" onclick="switchView('register')">Pledge to Donate Now</button>
+                </div>
+            </div>
+
+            <div class="container my-5 pt-4">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold" style="color: var(--brand-dark);">The Power of Giving</h2>
+                    <p class="text-muted">Every donation helps patients recovering from surgery, undergoing cancer treatment, and surviving trauma.</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <img src="https://images.unsplash.com/photo-1536856136534-bb679c52a9aa?q=80&w=800" class="gallery-img">
+                        <h5 class="fw-bold mt-3 text-center">Safe & Professional</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800" class="gallery-img">
+                        <h5 class="fw-bold mt-3 text-center">Urgent Need</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="https://images.unsplash.com/photo-1584362917165-526a968579e8?q=80&w=800" class="gallery-img">
+                        <h5 class="fw-bold mt-3 text-center">Community Support</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="register" class="view-section container my-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="form-container">
+                        <div class="text-center mb-4 border-bottom pb-3">
+                            <h2 class="fw-bold" style="color: var(--brand-dark);">Donor Registration Form</h2>
+                            <p class="text-muted">Please fill in your details to schedule your blood donation.</p>
+                        </div>
+
+                        <form id="donationForm" onsubmit="handleRegistration(event)">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-8">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="donorName" required >
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Age</label>
+                                    <input type="number" class="form-control" id="donorAge"  required min="1">
+                                </div>
+                            </div>
+                           
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Blood Group</label>
+                                    <select class="form-select" id="bloodGroup" required>
+                                        <option value="">Select Blood Group...</option>
+                                        <option value="A+">A+</option><option value="A-">A-</option>
+                                        <option value="B+">B+</option><option value="B-">B-</option>
+                                        <option value="O+">O+</option><option value="O-">O-</option>
+                                        <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="donorPhone" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="donorEmail" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Residential Address</label>
+                                <textarea class="form-control" id="donorAddress" rows="3" required></textarea>
+                            </div>
+
+                            <div class="row g-3 mb-4 mt-2 p-3 rounded" style="background-color: #f8f9fa; border: 1px dashed #ced4da;">
+                                <div class="col-md-6">
+                                    <label class="form-label mt-0">Preferred Date</label>
+                                    <input type="date" class="form-control" id="donationDate" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label mt-0">Preferred Time</label>
+                                    <input type="time" class="form-control" id="donationTime" required>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 text-center">
+                                <button type="submit" id="submitBtn" class="btn-brand w-100 fs-5">Submit Registration</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div id="status" class="view-section container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="form-container text-center">
+
+                <h2>Check Status</h2>
+
+                <input 
+                    type="text" 
+                    id="refInput" 
+                    class="form-control mb-3" 
+                    placeholder="Enter REF ID"
+                >
+
+                <button class="btn-brand w-100" onclick="checkStatus()">
+                    Check Status
+                </button>
+
+                <div id="statusResult" class="mt-4"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="admin" class="view-section container my-5">
+    <div class="form-container">
+
+        <!-- 🔐 LOGIN -->
+        <h3 class="text-center mb-3">Admin Login</h3>
+
+        <input 
+            id="adminUser" 
+            class="form-control mb-2" 
+            placeholder="Username"
+        >
+
+        <input 
+            id="adminPass" 
+            type="password" 
+            class="form-control mb-3" 
+            placeholder="Password"
+        >
+
+        <button id="adminLoginBtn" class="btn-brand w-100 mb-4" onclick="loginAdmin()">
+            Login
+        </button>
+           
+
+        <!-- 📊 DASHBOARD -->
+        <div id="adminDashboard" style="display:none;">
+         <button class="btn btn-danger mb-3" onclick="logoutAdmin()">
+    Logout
+</button>
+            <h4 class="text-center mb-3">Dashboard</h4>
+
+            <div class="row text-center mb-3">
+                <div class="col-md-4">
+                    <div class="card p-3 shadow">
+                        <h5>Total Pending</h5>
+                        <h2 id="countPending">0</h2>
+                    </div>
+                </div>
+            </div>
+
+            <input 
+                class="form-control mb-3" 
+                id="searchInput" 
+                placeholder="Search by name"
+            >
+
+            <div id="donorTable"></div>
+
+        </div>
+
+    </div>
+</div>
+    <footer class="footer-watermark text-center">
+        <div class="container">
+            <p class="mb-1">This website is made by <strong>K.RAJU</strong> | Roll No. <strong>24STUCHH010868</strong></p>
+            <small>&copy; 2026 All Rights Reserved.</small>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4 border-0 shadow-lg" style="border-radius: 16px;">
+                <div class="modal-body">
+                    <div class="success-icon">❤️</div>
+                    <h3 class="fw-bold" style="color: var(--brand-dark);">Registration Successful!</h3>
+                    <p class="lead mt-3" style="color: var(--brand-red); font-weight: 600;">Your data has been securely saved.</p>
+                    <button type="button" class="btn-brand mt-4 w-100" data-bs-dismiss="modal" onclick="closeModalAndGoHome()">Return to Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Set minimum date for the date picker
+        const dateInput = document.getElementById('donationDate');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            document.getElementById('nav-' + viewId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Send data to Python Backend
+        async function handleRegistration(event) {
+            event.preventDefault();
+    // ===== CUSTOM VALIDATIONS =====
+
+// NAME
+const nameInput = document.getElementById('donorName');
+nameInput.setCustomValidity("");
+if (nameInput.value.trim().length < 3) {
+    nameInput.setCustomValidity("Name must be at least 3 characters");
+}
+
+// AGE
+const ageInput = document.getElementById('donorAge');
+ageInput.setCustomValidity("");
+
+if (ageInput.value < 18 || ageInput.value > 65) {
+    ageInput.setCustomValidity("Age must be between 18 and 65");
+}
+
+// BLOOD GROUP
+const bloodInput = document.getElementById('bloodGroup');
+bloodInput.setCustomValidity("");
+if (bloodInput.value === "") {
+    bloodInput.setCustomValidity("Please select a blood group");
+}
+
+// PHONE
+const phoneInput = document.getElementById('donorPhone');
+phoneInput.setCustomValidity("");
+if (!/^[0-9]{10}$/.test(phoneInput.value)) {
+    phoneInput.setCustomValidity("Phone number must be exactly 10 digits");
+}
+
+// EMAIL
+const emailInput = document.getElementById('donorEmail');
+emailInput.setCustomValidity("");
+if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+    emailInput.setCustomValidity("Enter a valid email address");
+}
+
+// ADDRESS
+const addressInput = document.getElementById('donorAddress');
+addressInput.setCustomValidity("");
+if (addressInput.value.trim().length < 5) {
+    addressInput.setCustomValidity("Address must be at least 5 characters long");
+}
+
+// DATE
+const dateInput = document.getElementById('donationDate');
+dateInput.setCustomValidity("");
+if (!dateInput.value) {
+    dateInput.setCustomValidity("Please select a date");
+}
+
+// TIME
+const timeInput = document.getElementById('donationTime');
+timeInput.setCustomValidity("");
+if (!timeInput.value) {
+    timeInput.setCustomValidity("Please select a time");
+}
+
+// FINAL CHECK
+
+
+// Now check validity
+if (!event.target.checkValidity()) {
+    event.target.reportValidity();
+    return;
+}
+
+    const name = document.getElementById('donorName').value;
+    const age = document.getElementById('donorAge').value;
+    const blood = document.getElementById('bloodGroup').value;
+    const phone = document.getElementById('donorPhone').value;
+    const email = document.getElementById('donorEmail').value;
+    const address = document.getElementById('donorAddress').value;
+    const date = document.getElementById('donationDate').value;
+    const time = document.getElementById('donationTime').value;// ===== ADD VALIDATION HERE =====
+    
+    // ===== END VALIDATION =====
+
+
+    // 👇 KEEP YOUR EXISTING CODE BELOW (no change)
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "Connecting to Server...";
+    btn.disabled = true;
+
+    const donorData = {
+        name: name,
+        age: age,
+        blood_group: blood,
+        phone: phone,
+        email: email,
+        address: address,
+        date: date,
+        time: time
+    };
+
+            try {
+                // Send JSON to Python
+                const response = await fetch('http://127.0.0.1:5000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(donorData)
+                });
+
+                if (response.ok) {
+                       const result = await response.json();  // get backend response
+
+                        var myModal = new bootstrap.Modal(document.getElementById('successModal'));
+                             myModal.show();
+
+    // Create result display (regression/prediction)
+                            // remove old result first
+const old = document.getElementById("resultBlock");
+if (old) old.remove();
+
+// create new result
+let resultText = document.createElement("p");
+resultText.id = "resultBlock";
+
+resultText.style.marginTop = "10px";
+resultText.style.fontWeight = "600";
+resultText.style.color = "#1d3557";
+
+                              resultText.innerHTML = `
+<div style="text-align:center;">
+
+    <h5 style="color:#1d3557;">Registration Successful</h5>
+
+    <p style="font-size:18px;">
+        <strong>REF ID:</strong> ${result.ref_id}
+    </p>
+
+    <p style="color:#666;">
+        Save this ID to check your status later
+    </p>
+
+    <hr>
+
+    <p style="font-size:14px; color:#444;">
+        Our team will meet you on your preferred date.
+    </p>
+
+    <p style="font-size:13px; color:#777;">
+        For any queries, contact us:
+    </p>
+
+    <p style="font-size:13px; font-weight:600;">
+        📞 9391535364 <br>
+        📧 sabkaseva@gmail.com
+    </p>
+
+</div>
+`;
+
+
+                               document.querySelector("#successModal .modal-body").appendChild(resultText);
+}
+                 else {
+                    alert("There was an issue saving your data.");
+                }
+            } catch (error) {
+                alert("Cannot reach the server! Is python app.py running in your terminal?");
+            }
+
+            btn.innerText = "Submit Registration";
+            btn.disabled = false;
+        }
+
+        function closeModalAndGoHome() {
+            document.getElementById('donationForm').reset();
+            switchView('home');
+        }
+        document.getElementById('donorName').addEventListener('input', function(){ this.setCustomValidity(""); });
+document.getElementById('donorAge').addEventListener('input', function(){ this.setCustomValidity(""); });
+document.getElementById('bloodGroup').addEventListener('change', function(){ this.setCustomValidity(""); });
+document.getElementById('donorPhone').addEventListener('input', function(){ this.setCustomValidity(""); });
+document.getElementById('donorEmail').addEventListener('input', function(){ this.setCustomValidity(""); });
+document.getElementById('donorAddress').addEventListener('input', function(){ this.setCustomValidity(""); });
+document.getElementById('donationDate').addEventListener('change', function(){ this.setCustomValidity(""); });
+document.getElementById('donationTime').addEventListener('change', function(){ this.setCustomValidity(""); });
+const searchBox = document.getElementById("searchInput");
+if (searchBox) {
+    searchBox.addEventListener("input", loadDonors);
+}
+
+// 🔐 ADMIN LOGIN
+async function loginAdmin() {
+    const res = await fetch('http://127.0.0.1:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: document.getElementById("adminUser").value,
+            password: document.getElementById("adminPass").value
+        })
+    });
+
+    if (res.ok) {
+        document.getElementById("adminUser").style.display = "none";
+        document.getElementById("adminPass").style.display = "none"
+        document.getElementById("adminLoginBtn").style.display = "none";
+        document.getElementById("adminDashboard").style.display = "block";
+        loadDonors();
+    } else {
+        alert("Invalid login");
+    }
+}
+
+
+// 📊 LOAD DONORS (ADMIN TABLE)
+async function loadDonors() {
+    const res = await fetch('http://127.0.0.1:5000/api/donors');
+    const data = await res.json();
+
+    // Pending count
+    document.getElementById("countPending").innerText =
+        data.filter(d => d.status === "pending").length;
+
+    const searchInput = document.getElementById("searchInput");
+    const search = searchInput ? searchInput.value.toLowerCase() : "";
+
+    // === PENDING TABLE ===
+    let pendingHTML = `
+    <h5 class="mt-3">🟡 Pending Donors</h5>
+    <table class="table table-bordered">
+        <tr>
+            <th>Ref ID</th>
+            <th>Name</th>
+            <th>Action</th>
+        </tr>
+    `;
+
+    // === PROCESSED TABLE ===
+    let processedHTML = `
+    <h5 class="mt-4">🟢 Processed Donors</h5>
+    <table class="table table-bordered">
+        <tr>
+            <th>Ref ID</th>
+            <th>Name</th>
+            <th>Order ID</th>
+            <th>Valid From</th>
+            <th>Valid Till</th>
+            <th>Download</th>
+        </tr>
+    `;
+
+    data
+    .filter(d => d.name.toLowerCase().includes(search))
+    .forEach(d => {
+
+        if (d.status === "pending") {
+            pendingHTML += `
+            <tr>
+                <td>${d.ref_id}</td>
+                <td>${d.name}</td>
+                <td>
+                    <button class="btn btn-success btn-sm"
+                        onclick="processDonor(${d.id})">
+                        Process
+                    </button>
+                    <button class="btn btn-danger btn-sm"
+        onclick="deleteDonor(${d.id})">
+        Decline
+    </button>
+                </td>
+            </tr>`;
+        }
+
+        if (d.status === "processed") {
+            processedHTML += `
+            <tr>
+                <td>${d.ref_id}</td>
+                <td>${d.name}</td>
+                <td>${d.order_id}</td>
+                <td>${d.start_date}</td>
+                <td>${d.expiry_date}</td>
+                <td>
+       <button class="btn btn-primary btn-sm"
+    onclick='generatePDFForDonor(${JSON.stringify(d)})'>
+    Download
+</button>
+    </td>
+            </tr>`;
+        }
+    });
+
+    pendingHTML += "</table>";
+    processedHTML += "</table>";
+
+    document.getElementById("donorTable").innerHTML =
+        pendingHTML + processedHTML;
+}
+
+// ⚙️ PROCESS DONOR
+async function processDonor(id) {
+    await fetch(`http://127.0.0.1:5000/api/process/${id}`, {
+        method: "POST"
+    });
+
+    alert("Donor Processed Successfully!");
+    loadDonors();
+}
+
+
+// 🔍 CHECK STATUS (USER SIDE)
+async function checkStatus() {
+    const ref = document.getElementById("refInput").value;
+
+    const res = await fetch(`http://127.0.0.1:5000/api/status/${ref}`);
+    const data = await res.json();
+
+    const box = document.getElementById("statusResult");
+
+    if (data.status === "pending") {
+        box.innerHTML = "⏳ Waiting for approval";
+    }
+    else if (data.status === "processed") {
+        box.innerHTML = `
+            <p><strong>Order ID:</strong> ${data.order_id}</p>
+            <p><strong>Valid From:</strong> ${data.start_date}</p>
+            <p><strong>Valid Till:</strong> ${data.expiry_date}</p>
+
+            <button class="btn btn-success"
+                onclick='generatePDFForDonor(${JSON.stringify(data)})'>
+                Download PDF
+            </button>
+        `;
+    }
+    else {
+        box.innerHTML = "Invalid REF ID";
+    }
+}
+// ✅ PROFESSIONAL PDF FUNCTION (ADMIN + USER)
+window.generatePDFForDonor = function (donor) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // ---------- HEADER ----------
+    doc.setFillColor(230, 57, 70);
+    doc.rect(0, 0, 210, 25, "F");
+
+    doc.setTextColor(255);
+    doc.setFontSize(16);
+    doc.setFont(undefined, "bold");
+    doc.text("SabkaSeva", 105, 12, { align: "center" });
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, "normal");
+    doc.text("Blood Donation Initiative", 105, 18, { align: "center" });
+
+    // ---------- ORDER ID BADGE ----------
+    doc.setFillColor(240, 240, 240);
+    doc.roundedRect(10, 30, 190, 10, 2, 2, "F");
+
+    doc.setTextColor(0);
+    doc.setFontSize(11);
+    doc.setFont(undefined, "bold");
+    doc.text("Order ID: " + (donor.order_id || "-"), 105, 37, { align: "center" });
+
+    // ---------- SECTION TITLE ----------
+    doc.setFontSize(13);
+    doc.setFont(undefined, "bold");
+    doc.text("Donor Information", 20, 48);
+
+    // ---------- SEPARATOR ----------
+    doc.setDrawColor(200);
+    doc.line(10, 50, 200, 50);
+
+    // ---------- DETAILS (ALIGNED) ----------
+    const data = [
+        ["Name", donor.name],
+        ["Age", donor.age],
+        ["Blood Group", donor.blood_group],
+        ["Phone", donor.phone],
+        ["Email", donor.email],
+        ["Address", donor.address],
+        ["Date", donor.date],
+        ["Time", donor.time]
+    ];
+
+    let y = 60;
+
+    data.forEach(([label, value]) => {
+        doc.setFont(undefined, "bold");
+        doc.text(label, 20, y);
+
+        doc.setFont(undefined, "normal");
+        doc.text(": " + (value || "-"), 70, y);
+
+        y += 10;
+    });
+
+    // ---------- VALIDITY SECTION ----------
+    y += 5;
+
+    doc.setFont(undefined, "bold");
+    doc.text("Validity Period", 20, y);
+
+    y += 8;
+
+    doc.setFont(undefined, "normal");
+    doc.text("Valid From: " + (donor.start_date || "-"), 20, y);
+
+    y += 8;
+
+    doc.text("Valid Till: " + (donor.expiry_date || "-"), 20, y);
+    y += 12;
+
+// ---------- BENEFITS SECTION ----------
+doc.setFont(undefined, "bold");
+doc.setFontSize(12);
+doc.text("Benefits & Instructions", 20, y);
+
+y += 8;
+
+doc.setFont(undefined, "normal");
+doc.setFontSize(10);
+
+// Point 1
+doc.text("• You are eligible for free medical checkups for 9 months.", 20, y);
+y += 7;
+
+// Point 2
+doc.text("• Valid at partner hospitals like Apollo Hospitals and Yashoda Hospitals.", 20, y);
+y += 7;
+
+// Point 3
+doc.text("• Carry this receipt and a valid ID during your visit.", 20, y);
+    // ---------- THANK YOU ----------
+    doc.setFontSize(10);
+    doc.setTextColor(0);
+    doc.text("Thank you for saving lives", 105, 240, { align: "center" });
+
+    // ---------- FOOTER ----------
+    doc.setFillColor(29, 53, 87);
+    doc.rect(0, 250, 210, 20, "F");
+
+    doc.setTextColor(255);
+    doc.setFontSize(10);
+    doc.setFont(undefined, "bold");
+    doc.text("SabkaSeva Blood Donation Initiative", 105, 257, { align: "center" });
+
+    doc.setFontSize(9);
+    doc.setFont(undefined, "normal");
+    doc.text("Contact: +91 9391535364 | Email: sabkaseva@gmail.com", 105, 263, { align: "center" });
+
+    // ---------- SAVE ----------
+    doc.save((donor.order_id || "Donor_Receipt") + ".pdf");
+};
+function logoutAdmin() {
+    document.getElementById("adminUser").style.display = "block";
+    document.getElementById("adminPass").style.display = "block";
+    document.getElementById("adminLoginBtn").style.display = "block";
+
+    document.getElementById("adminDashboard").style.display = "none";
+
+    document.getElementById("adminUser").value = "";
+    document.getElementById("adminPass").value = "";
+}
+async function deleteDonor(id) {
+
+    if (!confirm("Are you sure you want to decline this donor?")) return;
+
+    const res = await fetch(`http://127.0.0.1:5000/api/delete/${id}`, {
+        method: "DELETE"
+    });
+
+    if (res.ok) {
+        alert("Donor removed");
+        loadDonors(); // refresh table
+    } else {
+        alert("Error deleting donor");
+    }
+}
+ </script>
+</body>
+</html>
