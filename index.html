@@ -537,6 +537,8 @@ async function loadDonors() {
         <tr>
             <th>Ref ID</th>
             <th>Name</th>
+             <th>Phone</th>
+             <th>Address</th>
             <th>Action</th>
         </tr>
     `;
@@ -560,22 +562,24 @@ async function loadDonors() {
     .forEach(d => {
 
         if (d.status === "pending") {
-            pendingHTML += `
-            <tr>
-                <td>${d.ref_id}</td>
-                <td>${d.name}</td>
-                <td>
-                    <button class="btn btn-success btn-sm"
-                        onclick="processDonor(${d.id})">
-                        Process
-                    </button>
-                    <button class="btn btn-danger btn-sm"
-        onclick="deleteDonor(${d.id})">
-        Decline
-    </button>
-                </td>
-            </tr>`;
-        }
+    pendingHTML += `
+    <tr>
+        <td>${d.ref_id}</td>
+        <td>${d.name}</td>
+        <td>${d.phone}</td>
+        <td style="max-width:200px; overflow-wrap:break-word;">${d.address}</td>
+        <td>
+            <button class="btn btn-success btn-sm"
+                onclick="processDonor(${d.id})">
+                Process
+            </button>
+            <button class="btn btn-danger btn-sm"
+                onclick="deleteDonor(${d.id})">
+                Decline
+            </button>
+        </td>
+    </tr>`;
+}
 
         if (d.status === "processed") {
             processedHTML += `
